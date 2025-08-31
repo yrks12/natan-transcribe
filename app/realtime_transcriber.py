@@ -31,7 +31,7 @@ class RealtimeTranscriber:
     def transcribe_with_updates(
         self,
         audio_path: Path,
-        mode: Literal["word", "sentence"] = "sentence",
+        mode: Literal["word", "sentence", "word_precise"] = "sentence",
         progress_callback=None,
         realtime_callback=None
     ) -> Dict:
@@ -68,8 +68,8 @@ class RealtimeTranscriber:
                 progress_thread.daemon = True
                 progress_thread.start()
             
-            # Set options based on mode
-            word_timestamps = (mode == "word")
+            # Set options based on mode - enable word timestamps for both word modes
+            word_timestamps = (mode in ["word", "word_precise"])
             
             # Perform actual transcription
             result = mlx_whisper.transcribe(
@@ -91,7 +91,7 @@ class RealtimeTranscriber:
             st.error(f"שגיאת תמלול: {str(e)}")
             return None
     
-    def extract_segments(self, result: Dict, mode: Literal["word", "sentence"] = "sentence") -> list:
+    def extract_segments(self, result: Dict, mode: Literal["word", "sentence", "word_precise"] = "sentence") -> list:
         """Extract segments with timestamps from transcription result."""
         segments = []
         
@@ -99,7 +99,7 @@ class RealtimeTranscriber:
             return segments
         
         for segment in result["segments"]:
-            if mode == "word" and "words" in segment:
+            if mode in ["word", "word_precise"] and "words" in segment:
                 # Extract word-level timestamps
                 for word_info in segment["words"]:
                     segments.append({

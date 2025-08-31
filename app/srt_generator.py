@@ -95,9 +95,13 @@ class SRTGenerator:
         if not segments:
             return ""
         
-        # Group words if in word mode
+        # Handle different timestamp modes
         if mode == "word":
+            # Group words into readable subtitle chunks
             segments = self.group_words_into_subtitles(segments)
+        elif mode == "word_precise":
+            # Use individual words as-is for precise timestamps (no grouping)
+            pass
         
         srt_lines = []
         

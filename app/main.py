@@ -59,9 +59,9 @@ def main():
         # Timestamp mode
         timestamp_mode = st.radio(
             "מצב חותמות זמן",
-            options=["sentence", "word"],
-            format_func=lambda x: "ברמת משפט" if x == "sentence" else "ברמת מילה",
-            help="ברמת משפט יוצר כתוביות קריאות יותר, ברמת מילה מספק תזמון מדויק יותר"
+            options=["sentence", "word", "word_precise"],
+            format_func=lambda x: {"sentence": "ברמת משפט", "word": "ברמת מילה (קבוצות)", "word_precise": "ברמת מילה (מדויק)"}[x],
+            help="ברמת משפט: כתוביות קריאות | ברמת מילה (קבוצות): מילים בקבוצות קטנות | ברמת מילה (מדויק): מילה אחת בכל כתובית"
         )
         
         st.divider()
