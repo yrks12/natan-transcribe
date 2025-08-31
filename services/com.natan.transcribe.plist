@@ -7,7 +7,7 @@
     
     <key>ProgramArguments</key>
     <array>
-        <string>/usr/bin/python3</string>
+        <string>{{PYTHON_PATH}}</string>
         <string>-m</string>
         <string>streamlit</string>
         <string>run</string>

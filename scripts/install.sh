@@ -123,33 +123,98 @@ mkdir -p "$HOME/Library/LaunchAgents"
 
 # Get Python version for user bin path
 PYTHON_VERSION=$(python3 -c 'import sys; print(".".join(map(str, sys.version_info[:2])))')
-USER_PYTHON_BIN="$HOME/Library/Python/$PYTHON_VERSION/bin"
+
+# Get the correct user's home directory (even when run with sudo)
+if [ -n "$SUDO_USER" ]; then
+    REAL_USER_HOME=$(eval echo ~$SUDO_USER)
+    USER_PYTHON_BIN="$REAL_USER_HOME/Library/Python/$PYTHON_VERSION/bin"
+else
+    USER_PYTHON_BIN="$HOME/Library/Python/$PYTHON_VERSION/bin"
+fi
+
+# Find the correct Python path that has streamlit installed
+# Test different Python paths in order of preference
+for TEST_PYTHON in "/opt/homebrew/bin/python3" "/usr/local/bin/python3" "/usr/bin/python3" "/Library/Developer/CommandLineTools/usr/bin/python3"; do
+    if [ -f "$TEST_PYTHON" ] && $TEST_PYTHON -c "import streamlit" 2>/dev/null; then
+        PYTHON_PATH="$TEST_PYTHON"
+        echo "Testing $TEST_PYTHON: ✓ has streamlit"
+        break
+    else
+        echo "Testing $TEST_PYTHON: ✗ no streamlit or not found"
+    fi
+done
+
+# If no Python with streamlit found, default to system python3
+if [ -z "$PYTHON_PATH" ]; then
+    PYTHON_PATH=$(which python3)
+    echo "No Python with streamlit found, using default: $PYTHON_PATH"
+fi
+
+echo -e "${GREEN}Using Python: $PYTHON_PATH${NC}"
 
 # Update paths in plist file
-sed -e "s|{{PROJECT_DIR}}|$PROJECT_DIR|g" -e "s|{{USER_PYTHON_BIN}}|$USER_PYTHON_BIN|g" "$PLIST_FILE" > "$PLIST_DEST"
+sed -e "s|{{PROJECT_DIR}}|$PROJECT_DIR|g" -e "s|{{USER_PYTHON_BIN}}|$USER_PYTHON_BIN|g" -e "s|{{PYTHON_PATH}}|$PYTHON_PATH|g" "$PLIST_FILE" > "$PLIST_DEST"
 echo -e "${GREEN}✓ Service configuration updated${NC}"
 
-# Step 7: Load the service
+# Step 7: Installing and starting service...
 echo ""
 echo -e "${YELLOW}Step 7: Installing and starting service...${NC}"
 
-# Unload if already loaded
-launchctl unload "$PLIST_DEST" 2>/dev/null || true
+# Kill any existing processes
+pkill -f "streamlit.*8501" 2>/dev/null || true
+rm -f /tmp/natan-transcribe.pid
 
-# Load the service
-launchctl load "$PLIST_DEST"
-echo -e "${GREEN}✓ Service installed and started${NC}"
+# Create reliable manual start script
+cat > "$HOME/.local/bin/natan-transcribe-start" << EOF
+#!/bin/bash
+# Kill any existing instance first
+pkill -f "streamlit.*8501" 2>/dev/null || true
+rm -f /tmp/natan-transcribe.pid
+
+cd "$PROJECT_DIR"
+echo "Starting Natan Transcribe service..."
+nohup $PYTHON_PATH -m streamlit run app/main.py \\
+    --server.port=8501 \\
+    --server.address=localhost \\
+    --server.headless=true \\
+    --server.maxUploadSize=10000 \\
+    > ~/natan-transcribe.out 2> ~/natan-transcribe.err &
+
+echo \$! > /tmp/natan-transcribe.pid
+sleep 2
+echo "Natan Transcribe started (PID: \$!)"
+echo "Access at: http://localhost:8501"
+open http://localhost:8501 2>/dev/null || true
+EOF
+chmod +x "$HOME/.local/bin/natan-transcribe-start"
+
+# Create stop script
+cat > "$HOME/.local/bin/natan-transcribe-stop" << EOF
+#!/bin/bash
+echo "Stopping Natan Transcribe service..."
+pkill -f "streamlit.*8501" 2>/dev/null && echo "Service stopped" || echo "Service was not running"
+rm -f /tmp/natan-transcribe.pid
+EOF
+chmod +x "$HOME/.local/bin/natan-transcribe-stop"
+
+# Start the service immediately
+"$HOME/.local/bin/natan-transcribe-start"
+echo -e "${GREEN}✓ Service started successfully${NC}"
 
 # Step 8: Verify Installation
 echo ""
 echo -e "${YELLOW}Step 8: Verifying installation...${NC}"
 
 # Wait a moment for service to start
-sleep 3
+sleep 5
 
-# Check if service is running
-if launchctl list | grep -q "com.natan.transcribe"; then
-    echo -e "${GREEN}✓ Service is running${NC}"
+# Check if the web service is actually responding
+if curl -s http://localhost:8501 | grep -q "Streamlit"; then
+    echo -e "${GREEN}✓ Web service is running and responding${NC}"
+elif [ -f /tmp/natan-transcribe.pid ] && kill -0 $(cat /tmp/natan-transcribe.pid) 2>/dev/null; then
+    echo -e "${GREEN}✓ Service is running (manual mode)${NC}"
+elif launchctl list | grep -q "com.natan.transcribe"; then
+    echo -e "${YELLOW}⚠ Service is loaded but may not be responding. Check logs at /tmp/natan-transcribe.err${NC}"
 else
     echo -e "${RED}⚠ Service may not be running. Check logs at /tmp/natan-transcribe.err${NC}"
 fi
@@ -161,21 +226,16 @@ echo -e "${YELLOW}Step 9: Creating convenience commands...${NC}"
 # Create local bin directory if not exists
 mkdir -p "$HOME/.local/bin"
 
-# Create start script
+# Create start script (use the reliable manual method)
 cat > "$HOME/.local/bin/natan-start" << EOF
 #!/bin/bash
-launchctl load "$PLIST_DEST"
-echo "Natan Transcribe service started"
-echo "Opening http://localhost:8501"
-sleep 2
-open http://localhost:8501
+"$HOME/.local/bin/natan-transcribe-start"
 EOF
 
 # Create stop script
 cat > "$HOME/.local/bin/natan-stop" << EOF
 #!/bin/bash
-launchctl unload "$PLIST_DEST"
-echo "Natan Transcribe service stopped"
+"$HOME/.local/bin/natan-transcribe-stop"
 EOF
 
 # Create logs script
