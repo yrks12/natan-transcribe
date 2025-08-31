@@ -13,11 +13,8 @@ def save_uploaded_file(uploaded_file) -> Optional[Path]:
     if uploaded_file is None:
         return None
     
-    # Check file size
+    # Show file size info (but no limit check for local usage)
     file_size_mb = uploaded_file.size / (1024 * 1024)
-    if file_size_mb > MAX_FILE_SIZE_MB:
-        st.error(f"File size ({file_size_mb:.1f}MB) exceeds maximum allowed size ({MAX_FILE_SIZE_MB}MB)")
-        return None
     
     # Create unique filename using hash
     file_hash = hashlib.md5(uploaded_file.name.encode()).hexdigest()[:8]
@@ -26,10 +23,13 @@ def save_uploaded_file(uploaded_file) -> Optional[Path]:
     temp_path = TEMP_DIR / temp_filename
     
     # Save file
-    with open(temp_path, "wb") as f:
-        f.write(uploaded_file.getbuffer())
-    
-    return temp_path
+    try:
+        with open(temp_path, "wb") as f:
+            f.write(uploaded_file.getbuffer())
+        return temp_path
+    except Exception as e:
+        st.error(f"שגיאה בשמירת הקובץ: {str(e)}")
+        return None
 
 
 def cleanup_file(file_path: Path) -> None:

@@ -34,7 +34,7 @@ def main():
     # Header
     st.title("🎬 נתן תמלול")
     st.markdown("### המרת אודיו/וידאו לכתוביות SRT באמצעות MLX-Whisper")
-    st.markdown(f"*מותאם עבור Apple Silicon (M1/M2) • גודל קובץ מקסימלי: {STREAMLIT_MAX_UPLOAD_SIZE}MB*")
+    st.markdown("*מותאם עבור Apple Silicon (M1/M2) • ללא הגבלת גודל קובץ*")
     
     # Sidebar for settings
     with st.sidebar:
@@ -84,7 +84,7 @@ def main():
         uploaded_file = st.file_uploader(
             "בחר קובץ אודיו או וידאו",
             type=SUPPORTED_FORMATS,
-            help=f"גודל קובץ מקסימלי: {STREAMLIT_MAX_UPLOAD_SIZE}MB"
+            help="תומך בכל גדלי קבצים - עיבוד מקומי ללא הגבלות"
         )
         
         if uploaded_file is not None:

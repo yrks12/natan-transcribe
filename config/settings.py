@@ -10,12 +10,12 @@ WHISPER_BATCH_SIZE = int(os.getenv("WHISPER_BATCH_SIZE", "12"))
 
 # Streamlit Configuration
 STREAMLIT_PORT = int(os.getenv("STREAMLIT_PORT", "8501"))
-STREAMLIT_MAX_UPLOAD_SIZE = int(os.getenv("STREAMLIT_MAX_UPLOAD_SIZE", "500"))
+STREAMLIT_MAX_UPLOAD_SIZE = int(os.getenv("STREAMLIT_MAX_UPLOAD_SIZE", "10000"))  # 10GB max for local use
 
 # File Processing
 TEMP_DIR = Path(os.getenv("TEMP_DIR", "/tmp/natan-transcribe"))
 TEMP_DIR.mkdir(parents=True, exist_ok=True)
-MAX_FILE_SIZE_MB = int(os.getenv("MAX_FILE_SIZE_MB", "500"))
+MAX_FILE_SIZE_MB = int(os.getenv("MAX_FILE_SIZE_MB", "10000"))  # 10GB max for local use
 
 # Supported file formats
 SUPPORTED_VIDEO_FORMATS = ["mp4", "avi", "mov", "mkv", "webm"]

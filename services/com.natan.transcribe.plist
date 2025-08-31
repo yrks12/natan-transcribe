@@ -15,7 +15,7 @@
         <string>--server.port=8501</string>
         <string>--server.address=localhost</string>
         <string>--server.headless=true</string>
-        <string>--server.maxUploadSize=500</string>
+        <string>--server.maxUploadSize=10000</string>
     </array>
     
     <key>WorkingDirectory</key>
