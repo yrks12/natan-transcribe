@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.natan.transcribe</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/Users/yairkruskal/Projects/WebApps/natan-transcribe/venv/bin/python</string>
+        <string>-m</string>
+        <string>streamlit</string>
+        <string>run</string>
+        <string>/Users/yairkruskal/Projects/WebApps/natan-transcribe/app/main.py</string>
+        <string>--server.port=8501</string>
+        <string>--server.address=localhost</string>
+        <string>--server.headless=true</string>
+        <string>--server.maxUploadSize=500</string>
+    </array>
+    
+    <key>WorkingDirectory</key>
+    <string>/Users/yairkruskal/Projects/WebApps/natan-transcribe</string>
+    
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+    
+    <key>StandardOutPath</key>
+    <string>/tmp/natan-transcribe.out</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/tmp/natan-transcribe.err</string>
+    
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>PYTHONPATH</key>
+        <string>/Users/yairkruskal/Projects/WebApps/natan-transcribe</string>
+    </dict>
+</dict>
+</plist>
