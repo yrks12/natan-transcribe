@@ -1,0 +1,6 @@
+streamlit>=1.32.0
+mlx-whisper>=0.2.0
+ffmpeg-python>=0.2.0
+numpy>=1.24.0
+python-dotenv>=1.0.0
+tqdm>=4.66.0

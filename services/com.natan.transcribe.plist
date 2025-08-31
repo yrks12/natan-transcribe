@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
+<plist version="1.0">
+<dict>
+    <key>Label</key>
+    <string>com.natan.transcribe</string>
+    
+    <key>ProgramArguments</key>
+    <array>
+        <string>/usr/bin/python3</string>
+        <string>-m</string>
+        <string>streamlit</string>
+        <string>run</string>
+        <string>{{PROJECT_DIR}}/app/main.py</string>
+        <string>--server.port=8501</string>
+        <string>--server.address=localhost</string>
+        <string>--server.headless=true</string>
+        <string>--server.maxUploadSize=10000</string>
+    </array>
+    
+    <key>WorkingDirectory</key>
+    <string>/tmp</string>
+    
+    <key>RunAtLoad</key>
+    <true/>
+    
+    <key>KeepAlive</key>
+    <dict>
+        <key>SuccessfulExit</key>
+        <false/>
+    </dict>
+    
+    <key>StandardOutPath</key>
+    <string>/tmp/natan-transcribe.out</string>
+    
+    <key>StandardErrorPath</key>
+    <string>/tmp/natan-transcribe.err</string>
+    
+    <key>EnvironmentVariables</key>
+    <dict>
+        <key>PATH</key>
+        <string>{{USER_PYTHON_BIN}}:/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <key>PYTHONPATH</key>
+        <string>{{PROJECT_DIR}}</string>
+    </dict>
+</dict>
+</plist>
