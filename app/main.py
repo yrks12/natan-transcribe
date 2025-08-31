@@ -4,7 +4,6 @@ import time
 import os
 
 from app.audio_processor import extract_audio, validate_audio_file
-from app.transcriber import WhisperTranscriber
 from app.realtime_transcriber import RealtimeTranscriber
 from app.srt_generator import SRTGenerator
 from utils.file_handler import save_uploaded_file, cleanup_file, get_file_info
