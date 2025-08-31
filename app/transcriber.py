@@ -4,7 +4,7 @@ from typing import Dict, List, Optional, Literal
 import streamlit as st
 import time
 
-from config.settings import WHISPER_MODEL, WHISPER_BATCH_SIZE
+from config.settings import WHISPER_MODEL
 
 
 class WhisperTranscriber:
@@ -45,8 +45,7 @@ class WhisperTranscriber:
                 str(audio_path),
                 path_or_hf_repo=self.model_name,
                 word_timestamps=word_timestamps,
-                verbose=False,
-                batch_size=WHISPER_BATCH_SIZE
+                verbose=False
             )
             
             if progress_callback:
