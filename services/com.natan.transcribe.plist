@@ -7,11 +7,11 @@
     
     <key>ProgramArguments</key>
     <array>
-        <string>/Users/yairkruskal/Projects/WebApps/natan-transcribe/venv/bin/python</string>
+        <string>{{PROJECT_DIR}}/venv/bin/python</string>
         <string>-m</string>
         <string>streamlit</string>
         <string>run</string>
-        <string>/Users/yairkruskal/Projects/WebApps/natan-transcribe/app/main.py</string>
+        <string>{{PROJECT_DIR}}/app/main.py</string>
         <string>--server.port=8501</string>
         <string>--server.address=localhost</string>
         <string>--server.headless=true</string>
@@ -19,7 +19,7 @@
     </array>
     
     <key>WorkingDirectory</key>
-    <string>/Users/yairkruskal/Projects/WebApps/natan-transcribe</string>
+    <string>{{PROJECT_DIR}}</string>
     
     <key>RunAtLoad</key>
     <true/>
@@ -39,9 +39,9 @@
     <key>EnvironmentVariables</key>
     <dict>
         <key>PATH</key>
-        <string>/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
+        <string>/opt/homebrew/bin:/usr/local/bin:/usr/bin:/bin:/usr/sbin:/sbin</string>
         <key>PYTHONPATH</key>
-        <string>/Users/yairkruskal/Projects/WebApps/natan-transcribe</string>
+        <string>{{PROJECT_DIR}}</string>
     </dict>
 </dict>
 </plist>

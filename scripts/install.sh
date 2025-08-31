@@ -141,7 +141,7 @@ PLIST_DEST="$HOME/Library/LaunchAgents/com.natan.transcribe.plist"
 mkdir -p "$HOME/Library/LaunchAgents"
 
 # Update paths in plist file
-sed "s|/Users/yairkruskal/Projects/WebApps/natan-transcribe|$PROJECT_DIR|g" "$PLIST_FILE" > "$PLIST_DEST"
+sed "s|{{PROJECT_DIR}}|$PROJECT_DIR|g" "$PLIST_FILE" > "$PLIST_DEST"
 echo -e "${GREEN}✓ Service configuration updated${NC}"
 
 # Step 7: Load the service
